@@ -29,6 +29,12 @@ If anything is missing, run the install command it prints
 (`pip install -r requirements.txt` and install ffmpeg). Don't continue until it
 says everything is OK.
 
+**Which Python:** if `python3 scripts/check_setup.py` reports missing packages
+but `python3.12` exists (`command -v python3.12`), run the check with
+`python3.12` instead. If that passes, use `python3.12` in place of `python3`
+for every command in this skill. (On Intel Macs, very new Pythons like 3.15
+have no prebuilt `av` package, so the packages are installed under 3.12.)
+
 ## Step 1 — Download the stream
 
 ```bash
