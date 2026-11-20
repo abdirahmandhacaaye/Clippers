@@ -26,7 +26,19 @@ Works for any game or IRL stream, not just GTA.
    ```
    It should say **All good ✓**.
 
-## Use it
+## Use it without Claude Code (one command)
+
+```
+python3.12 scripts/run_all.py "https://www.youtube.com/watch?v=XXXXXXX"
+```
+
+Downloads, transcribes, picks the hype moments automatically and renders the
+shorts into `work/<id>/shorts/` (the folder opens at the end). Options:
+`--count 5`, `--model base` (faster) / `medium` (better), `--language fr`,
+`--layout crop`, `--section 00:30:00-01:00:00`. Re-run the same command to
+resume if it gets interrupted.
+
+## Use it with Claude Code (smarter clip picks)
 
 Open Claude Code, **choose the `gta-clipper-skill` folder**, and type:
 
