@@ -9,7 +9,6 @@ import json
 import os
 import subprocess
 import sys
-import tempfile
 
 
 def ts(s):
@@ -29,11 +28,17 @@ def main():
     except ImportError:
         sys.exit("faster-whisper missing: pip install -r requirements.txt")
 
+    import numpy as np
+
     out_dir = os.path.dirname(os.path.abspath(a.video))
-    wav = os.path.join(tempfile.gettempdir(), "clipper_audio.wav")
     print("Extracting audio…")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", a.video, "-vn", "-ac", "1",
-                    "-ar", "16000", wav], check=True)
+    # Decode with ffmpeg ourselves and hand whisper a numpy array, so the
+    # PyAV package (often incompatible / hard to install) is never used.
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", a.video, "-vn", "-ac", "1",
+                          "-ar", "16000", "-f", "s16le", "-"],
+                         check=True, stdout=subprocess.PIPE).stdout
+    audio = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
+    del raw
 
     device, ctype = "cpu", "int8"
     try:
@@ -45,7 +50,7 @@ def main():
     print(f"Loading whisper '{a.model}' on {device}…")
     model = WhisperModel(a.model, device=device, compute_type=ctype)
 
-    segs, info = model.transcribe(wav, language=a.language, word_timestamps=True,
+    segs, info = model.transcribe(audio, language=a.language, word_timestamps=True,
                                   vad_filter=True, beam_size=5)
     print(f"Language: {info.language}  |  Duration: {ts(info.duration)}")
 
@@ -64,7 +69,6 @@ def main():
     with open(os.path.join(out_dir, "transcript.txt"), "w", encoding="utf-8") as f:
         for s in segments:
             f.write(f"[{ts(s['s'])}] {s['text']}\n")
-    os.remove(wav)
     print(f"✓ {len(segments)} segments, {len(words)} words → transcript.json / transcript.txt")
 
 
