@@ -58,6 +58,17 @@ Handy extras you can just say in chat:
 - **Claude app:** Settings → Capabilities → Skills → upload this zip
   (the app runs in the cloud, so long stream downloads may be blocked — Claude Code on your own computer is recommended)
 
+## Storytime (voix off IA + gameplay)
+
+```
+python3.12 scripts/storytime.py stories/journee-sans-loi.txt --out work/story1 --clips ~/Movies/gta
+```
+
+Writes the story as an ElevenLabs voice-over (needs `ELEVENLABS_API_KEY`),
+cuts to a new clip from your own gameplay folder at every sentence, and burns
+one-word captions in the middle. Without `--clips` you get a placeholder
+background to check timing.
+
 ## Tips
 - First run downloads the speech model (~500 MB for `small`). After that it's offline.
 - A 2-hour stream takes roughly 15–30 minutes on a normal laptop. With an NVIDIA GPU it's much faster.
